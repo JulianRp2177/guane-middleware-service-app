@@ -1,0 +1,28 @@
+version: "3.2"
+
+services:
+  service-middleware:
+    image: service-middleware:1.0.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 80
+    volumes:
+      - ./:/usr/src/app/
+    ports:
+      - 8002:80
+      - 10003:10003
+    environment:
+      - WEB_APP_VERSION=0.0.1
+      - WEB_APP_TITLE=service DB
+      - WEB_APP_DESCRIPTION=Microservice for seed middleware
+      - SERVICE_DATABASE=http://service-db-postgres
+      - WORKER_API=http://celery-service
+      - ENVIRONMENT=dev
+      - DEBUGGER=True
+    networks:
+      - guane
+
+networks:
+  guane:
+    external: true
